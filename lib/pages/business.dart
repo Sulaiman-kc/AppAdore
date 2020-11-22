@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import '../Home.dart';
 import '../models/data_models.dart';
+typedef ColorCallback = void Function();
 
 class BusinessPage extends StatefulWidget {
   @override
@@ -9,9 +11,10 @@ class BusinessPage extends StatefulWidget {
 class _BusinessPageState extends State<BusinessPage> {
   List data;
   dynamic mycolor = Colors.white;
-  bool isSelected = false;
+  // bool isSelected = false;
   @override
   void initState() {
+    print(isSelected);
     print('hello');
     // TODO: implement initState
     DataModel().fetchUsers().then((value) {
@@ -21,19 +24,21 @@ class _BusinessPageState extends State<BusinessPage> {
     });
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: (this.data == null)?0:20,
       itemBuilder: (context,i)=>Container(
-        // color: this.mycolor,
+        color: (this.data[i]['isSelected'] == null ||this.data[i]['isSelected'] == false)? Colors.white:Colors.greenAccent[100],
         child: Column(
           children: [
             Divider(
               height: 10.0,
             ),
             ListTile(
-              leading: CircleAvatar(
+                // selected: this.isSelected,
+                leading: CircleAvatar(
                 foregroundColor: Theme.of(context).primaryColor,
                 backgroundColor: Colors.grey,
                 backgroundImage: NetworkImage(this.data[i]["image"]),
@@ -59,22 +64,45 @@ class _BusinessPageState extends State<BusinessPage> {
                   style: TextStyle(color: Colors.grey, fontSize: 15.0),
                 ),
               ),
-                onLongPress:this.toggleSelection
+                onLongPress: () {
+                  print(i);
+                  setState(() {
+                    isSelected = true;
+                    if(this.data[i]["isSelected"] == null || this.data[i]["isSelected"] == false)
+                      this.data[i]["isSelected"] = true;
+                    else
+                      this.data[i]["isSelected"] = false;
+                  });
+                },//this.toggleSelection
+              onTap: () {
+                setState(() {
+                  isSelected = true;
+                  this.data[i]["isSelected"] = false;
+                });
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => AppAdoreHomePage()),
+                // );
+                // Navigator.pop(context);
+                print(isSelected);
+              },
             ),
           ],
         ),
       ),
     );
   }
-  void toggleSelection() {
-    setState(() {
-      if (this.isSelected) {
-        this.mycolor=Colors.white;
-        this.isSelected = false;
-      } else {
-        this.mycolor=Colors.grey[300];
-        this.isSelected = true;
-      }
-    });
+  toggleSelection() {
+    print('');
+
+    // setState(() {
+    //   if (this.isSelected) {
+    //     this.mycolor=Colors.white;
+    //     this.isSelected = false;
+    //   } else {
+    //     this.mycolor=Colors.grey[300];
+    //     this.isSelected = true;
+    //   }
+    // });
   }
 }
